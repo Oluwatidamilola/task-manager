@@ -1,51 +1,51 @@
-import express from 'express';
-import { getAllTasks, addTask, updateTask, deleteTask } from './queries.js';
+import pool from './db.js'; // Ensure your DB connection is correct
 
-const app = express();
-app.use(express.json());
-
-// GET all tasks
-app.get('/tasks', async (req, res) => {
+// Add a new task
+export async function addTask(task) {
   try {
-    const tasks = await getAllTasks();
-    res.json(tasks);
+    const result = await pool.query(
+      'INSERT INTO tasks (user_id, title, description, status, due_date) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [task.user_id, task.title, task.description, task.status, task.due_date]
+    );
+    return result.rows[0];
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Error adding task:', err.message);
+    throw err;
   }
-});
+}
 
-// POST a new task
-app.post('/tasks', async (req, res) => {
+// Fetch all tasks
+export async function getAllTasks() {
   try {
-    const newTask = await addTask(req.body);
-    res.status(201).json(newTask);
+    const result = await pool.query('SELECT * FROM tasks');
+    return result.rows;
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    console.error('Error fetching tasks:', err.message);
+    throw err;
   }
-});
+}
 
-// PUT update a task
-app.put('/tasks/:id', async (req, res) => {
+// Update a task
+export async function updateTask(taskId, updates) {
   try {
-    const updatedTask = await updateTask(req.params.id, req.body);
-    res.json(updatedTask);
+    const result = await pool.query(
+      'UPDATE tasks SET title = $1, description = $2, status = $3 WHERE id = $4 RETURNING *',
+      [updates.title, updates.description, updates.status, taskId]
+    );
+    return result.rows[0];
   } catch (err) {
-    res.status(404).json({ error: err.message });
+    console.error('Error updating task:', err.message);
+    throw err;
   }
-});
+}
 
-// DELETE a task
-app.delete('/tasks/:id', async (req, res) => {
+// Delete a task
+export async function deleteTask(taskId) {
   try {
-    await deleteTask(req.params.id);
-    res.json({ message: 'Task deleted successfully' });
+    const result = await pool.query('DELETE FROM tasks WHERE id = $1 RETURNING *', [taskId]);
+    return result.rows[0];
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    console.error('Error deleting task:', err.message);
+    throw err;
   }
-});
-
-// Start the server
-const PORT = 4000;
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+}

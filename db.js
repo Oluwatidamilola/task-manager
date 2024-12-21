@@ -1,16 +1,16 @@
-import pkg from 'pg'; // Import the default export from the pg library
-const { Pool } = pkg; // Destructure the Pool class from the default export
-import dotenv from 'dotenv'; // Import dotenv for environment variables
+import pkg from 'pg';
+import dotenv from 'dotenv';
 
-dotenv.config(); // Load environment variables from .env
+dotenv.config();
 
-// Create a connection pool
+const { Pool } = pkg;
+
 const pool = new Pool({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
   user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
+  host: process.env.DB_HOST,
   database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
 });
 
-export default pool; // Export the pool for use in other files
+export default pool;
