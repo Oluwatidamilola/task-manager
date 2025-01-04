@@ -11,7 +11,24 @@ photorec.se2
 .terraformrc
 terraform.rc
 **/terraform-provider-*
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+crash.log
+crash.*.log
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+.terraform.lock.hcl
 
+# Exclude provider binaries
+**/.terraform/providers/**
 # Ignore specific directories
 Task-Manager/task-manager/backend/
 Task-Manager/task-manager/cicd/
