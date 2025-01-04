@@ -1,0 +1,39 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to Amazon ECR
+        run: |
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 588577234645.dkr.ecr.us-east-1.amazonaws.com
+
+      - name: Build and Push Backend Docker Image
+        run: |
+          cd backend  # Navigate to the backend directory
+          docker build -t task-manager-backend:latest .
+          docker tag task-manager-backend:latest 588577234645.dkr.ecr.us-east-1.amazonaws.com/task-manager-backend:latest
+          docker push 588577234645.dkr.ecr.us-east-1.amazonaws.com/task-manager-backend:latest
+
+      - name: Build and Push Frontend Docker Image
+        run: |
+          cd frontend  # Navigate to the frontend directory
+          docker build -t task-manager-frontend:latest .
+          docker tag task-manager-frontend:latest 588577234645.dkr.ecr.us-east-1.amazonaws.com/task-manager-frontend:latest
+          docker push 588577234645.dkr.ecr.us-east-1.amazonaws.com/task-manager-frontend:latest
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f frontend/k8s/manifests/
+          kubectl apply -f backend/k8s/manifests/
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}

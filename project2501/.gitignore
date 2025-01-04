@@ -1,0 +1,34 @@
+# Ignore temporary files
+*.swp
+*.swo
+photorec.se2
+.terraform/
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+.terraformrc
+terraform.rc
+**/terraform-provider-*
+
+# Ignore specific directories
+Task-Manager/task-manager/backend/
+Task-Manager/task-manager/cicd/
+Task-Manager/task-manager/frontend/
+task-manager-backup/
+# Ignore specific files
+Task-Manager/task-manager/eslint.config.js
+Task-Manager/task-manager/queries.js
+Task-Manager/task-manager/test-db.js
+Task-Manager/task-manager/tests/
+Task-Manager/task-manager/validationtaskSchema.js
+
+# Ignore other patterns
+Task-Manager/task-manager/*.swp
+Task-Manager/task-manager/task-manager/
+go/
+
+# Ignore root-level task-manager directory
+task-manager/
+**/.terraform/providers/**
