@@ -1,7 +1,7 @@
 variable "environment" {
   description = "The environment name (e.g., Development, Staging, Production)"
   type        = string
-  default     = "Development" # You can change this default as needed
+  default     = "Development"
 }
 
 variable "aws_region" {
@@ -13,8 +13,9 @@ variable "aws_region" {
 variable "aws_profile" {
   description = "The AWS CLI profile to use for authentication"
   type        = string
-  default     = "default"  # Replace with "my-profile" if you prefer
+  default     = "my-profile"
 }
+
 variable "tags" {
   description = "Tags to apply to resources"
   type        = map(string)
@@ -22,4 +23,24 @@ variable "tags" {
     Environment = "Development"
     Project     = "Project2501"
   }
+}
+
+# Missing variables declared here
+variable "namespace" {
+  description = "The namespace for the service account"
+  type        = string
+}
+
+variable "service_account_name" {
+  description = "The name of the service account"
+  type        = string
+}
+variable "policy_json" {
+  description = "Path to the IAM policy JSON file"
+  type        = string
+}
+
+variable "cluster_name" {
+  description = "The name of the EKS cluster"
+  type        = string
 }

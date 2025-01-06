@@ -1,3 +1,14 @@
+terraform {
+  backend "s3" {
+    bucket         = "dguru-terraform-state-dev"
+    key            = "terraform.tfstate"
+    region         = "ap-northeast-1"
+    profile        = "my-profile"
+    dynamodb_table = "terraform-state-locks-dev"
+    encrypt        = true
+  }
+}
+
 module "backend" {
   source = "./backend"
 
@@ -12,8 +23,9 @@ module "vpc" {
 
   name            = "dev-vpc"
   cidr_block      = "10.0.0.0/16"
-  public_subnets  = ["10.0.1.0/24", "10.0.2.0/24"]  # Replace with your actual public subnets
-  private_subnets = ["10.0.3.0/24", "10.0.4.0/24"]  # Replace with your actual private subnets
+  public_subnets  = ["10.0.1.0/24", "10.0.2.0/24"]
+  private_subnets = ["10.0.3.0/24", "10.0.4.0/24"]
+
   tags = {
     Project     = "Project2501"
     Environment = "Development"
@@ -37,6 +49,6 @@ module "eks" {
     }
   }
 
-  tags = var.tags
+  tags        = var.tags
   environment = var.environment
 }

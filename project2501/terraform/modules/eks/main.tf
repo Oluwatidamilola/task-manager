@@ -1,32 +1,47 @@
-# EKS Cluster Module Configuration
-
 # EKS Cluster using Terraform AWS Modules
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 18.0"
 
+  # Cluster configuration
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
   vpc_id          = var.vpc_id
   subnet_ids      = var.subnet_ids
 
+  # Managed Node Groups
   eks_managed_node_groups = var.eks_managed_node_groups
 
-  tags = var.tags
+  # Fargate Profiles (if using Fargate)
+  fargate_profiles = var.fargate_profiles
+
+  # Logging
+  cluster_enabled_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+
+  # Tags
+  tags = merge(
+    var.tags,
+    {
+      "Name"        = "${var.cluster_name}-eks-cluster",
+      "Environment" = var.environment
+    }
+  )
 }
 
-# Security Group for EKS Cluster
-resource "aws_security_group" "cluster" {
+# Security Group for the EKS Cluster
+resource "aws_security_group" "eks_cluster" {
   vpc_id      = var.vpc_id
   description = "EKS cluster security group"
 
+  # Ingress rules
   ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.allowed_ingress_cidr_blocks
   }
 
+  # Egress rules
   egress {
     from_port   = 0
     to_port     = 0
@@ -34,21 +49,24 @@ resource "aws_security_group" "cluster" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Tags
   tags = merge(
     var.tags,
     {
-      Name        = "eks-cluster-sg"
-      Environment = var.environment
+      "Name"        = "${var.cluster_name}-eks-sg",
+      "Environment" = var.environment
     }
   )
 }
 
-# IRSA Configuration (IAM Roles for Service Accounts)
+# IAM Roles for Service Accounts (IRSA) Configuration
 module "irsa" {
-  source               = "./irsa" # Path to the IRSA module
+  source               = "../irsa"
+
   cluster_name         = module.eks.cluster_name
-  namespace            = "kube-system"                    # Replace with your namespace
-  service_account_name = "example-service-account"        # Replace with your service account name
-  policy_json          = file("${path.module}/policy.json") # Path to your IAM policy JSON
-  tags                 = var.tags
+  namespace            = var.irsa_namespace
+  service_account_name = var.irsa_service_account_name
+  policy_json          = file("${path.module}/policy.json") # Path to the IAM policy JSON file
+
+  tags = var.tags
 }
