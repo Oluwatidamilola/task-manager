@@ -55,3 +55,16 @@ task-manager/
 .package.json.swp
 .server.js.swp
 .test-db.js.swp
+# Terraform state and plan files
+*.tfstate
+*.tfstate.backup
+*.tfplan
+terraform-plan.out
+
+# IDE and editor files
+.vscode/
+.vscode-server/
+.cache/
+
+# Other system files
+*.plist
