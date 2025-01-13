@@ -26,7 +26,7 @@ jobs:
 
       - name: Build and Push Frontend Docker Image
         run: |
-          cd frontend  # Navigate to the frontend directory
+          cd frontend 
           docker build -t task-manager-frontend:latest .
           docker tag task-manager-frontend:latest 588577234645.dkr.ecr.us-east-1.amazonaws.com/task-manager-frontend:latest
           docker push 588577234645.dkr.ecr.us-east-1.amazonaws.com/task-manager-frontend:latest
