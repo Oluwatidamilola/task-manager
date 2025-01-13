@@ -19,7 +19,7 @@ jobs:
 
       - name: Build and Push Backend Docker Image
         run: |
-          cd backend  # Navigate to the backend directory
+          cd backend  
           docker build -t task-manager-backend:latest .
           docker tag task-manager-backend:latest 588577234645.dkr.ecr.us-east-1.amazonaws.com/task-manager-backend:latest
           docker push 588577234645.dkr.ecr.us-east-1.amazonaws.com/task-manager-backend:latest
